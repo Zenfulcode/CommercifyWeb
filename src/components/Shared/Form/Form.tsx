@@ -27,27 +27,3 @@ export function Form({ onSubmit, children, submitButtonText }: FormProps) {
         </form>
     );
 }
-
-interface FormFieldProps {
-    name: string;
-    label: string;
-    type: string;
-    required?: boolean;
-}
-
-export function FormField({ name, label, type, required = false }: FormFieldProps) {
-    return (
-        <div>
-            <label htmlFor={name} className="block mb-1">
-                {label}
-            </label>
-            <input
-                type={type}
-                id={name}
-                name={name}
-                required={required}
-                className="w-full px-3 py-2 border rounded"
-            />
-        </div>
-    );
-}

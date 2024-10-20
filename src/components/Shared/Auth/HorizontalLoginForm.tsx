@@ -32,7 +32,7 @@ export default function HorizontalLoginForm({ onLogin }: HorizontalLoginFormProp
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
-                className="px-2 py-1 border rounded text-sm"
+                className="px-2 py-1 border rounded text-sm flex-grow"
                 required
             />
             <input
@@ -40,7 +40,7 @@ export default function HorizontalLoginForm({ onLogin }: HorizontalLoginFormProp
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="px-2 py-1 border rounded text-sm"
+                className="px-2 py-1 border rounded text-sm flex-grow"
                 required
             />
             <button

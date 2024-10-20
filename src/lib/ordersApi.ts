@@ -1,4 +1,4 @@
-import { CartItem, Order, OrderDetails } from "@/types";
+import { Address, CartItem, Order, OrderDetails } from "@/types";
 import axios from "axios";
 
 const ordersApiUri = process.env.NEXT_PUBLIC_COMMERCIFY_API_URL;
