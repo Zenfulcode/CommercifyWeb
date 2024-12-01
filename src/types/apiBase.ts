@@ -51,6 +51,11 @@ export abstract class BaseApiService {
                 }
             );
 
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                throw new ApiError(401, 'Authentication required');
+            }
+
             if (!response.ok) {
                 throw new ApiError(
                     response.status,
@@ -88,10 +93,16 @@ export abstract class BaseApiService {
                 body: JSON.stringify(data),
             });
 
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                throw new ApiError(401, 'Authentication required');
+            }
+
             if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
                 throw new ApiError(
                     response.status,
-                    `API request failed: ${response.statusText}`
+                    errorData?.message || `Request failed: ${response.statusText}`
                 );
             }
 
@@ -100,7 +111,7 @@ export abstract class BaseApiService {
             if (error instanceof ApiError) {
                 throw error;
             }
-            throw new ApiError(500, 'Failed to create resource');
+            throw new ApiError(500, 'Request failed');
         }
     }
 
@@ -112,6 +123,11 @@ export abstract class BaseApiService {
             const response = await fetch(`${this.baseUrl}${endpoint}`, {
                 headers: this.getHeaders({ requiresAuth, includeContentType: false })
             });
+
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                throw new ApiError(401, 'Authentication required');
+            }
 
             if (!response.ok) {
                 throw new ApiError(
@@ -141,6 +157,11 @@ export abstract class BaseApiService {
                 body: JSON.stringify(data),
             });
 
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                throw new ApiError(401, 'Authentication required');
+            }
+
             if (!response.ok) {
                 throw new ApiError(
                     response.status,
@@ -166,6 +187,11 @@ export abstract class BaseApiService {
                 method: 'DELETE',
                 headers: this.getHeaders({ requiresAuth, includeContentType: false }),
             });
+
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                throw new ApiError(401, 'Authentication required');
+            }
 
             if (!response.ok) {
                 throw new ApiError(

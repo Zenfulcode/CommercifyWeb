@@ -8,6 +8,7 @@ import ProductCard from '@/components/products/ProductCard';
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = React.useState<Product[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pageInfo, setPageInfo] = React.useState<PageInfo | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -24,8 +25,9 @@ const ProductsPage: React.FC = () => {
         setProducts(response._embedded.productViewModels);
         setPageInfo(response.page);
       } catch (err) {
-
-        setError(err);
+        if(err instanceof Error) {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }

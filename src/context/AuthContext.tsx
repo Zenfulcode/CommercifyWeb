@@ -2,85 +2,108 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { authorizeUser, loginUser, registerUser } from '@/lib/authApi';
-import { User } from '@/types';
+import { authService } from '@/services/authService';
+import { RegisterRequest, LoginRequest, AuthResponse } from '@/types/auth';
+import { useToast } from '@/hooks/use-toast';
 
-interface AuthContextType {
-    user: User | null;
-    login: (email: string, password: string) => Promise<void>;
-    register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
-    logout: () => void;
-    isAuthenticated: boolean;
-    isLoading: boolean;
+interface LoginOptions {
+    rememberMe: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<{
+    user: AuthResponse['user'] | null;
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    register: (data: RegisterRequest, rememberMe?: boolean) => Promise<void>;
+    login: (data: LoginRequest, options?: LoginOptions) => Promise<void>;
+    logout: () => void;
+} | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<AuthResponse['user'] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { toast } = useToast();
     const router = useRouter();
 
     useEffect(() => {
-        checkUser();
+        const token = authService.getToken();
+        if (token) {
+            // Here you might want to validate the token with your backend
+            // and fetch the user data
+            setIsLoading(false);
+        } else {
+            setIsLoading(false);
+        }
     }, []);
 
-    async function checkUser() {
-        const token = localStorage.getItem('token');
-
-        if (token) {
-            try {
-                const authorized = await authorizeUser(token);
-                setUser(authorized);
-            } catch (error) {
-                console.error('Authorization failed:', error);
-                localStorage.removeItem('token');
-            }
-        }
-        setIsLoading(false);
-    }
-
-    const login = async (email: string, password: string) => {
+    const register = async (data: RegisterRequest, rememberMe = false) => {
         try {
-            const response = await loginUser(email, password);
-            localStorage.setItem('token', response.token);
+            setIsLoading(true);
+            const response = await authService.register(data, rememberMe);
             setUser(response.user);
-
-            router.push('/admin');
-
+            toast({
+                title: "Registration successful",
+                description: "Welcome to our store!",
+            });
+            router.push('/');
         } catch (error) {
-            console.error('Login failed:', error);
-            throw new Error('Login failed');
+            toast({
+                title: "Registration failed",
+                description: error instanceof Error ? error.message : "Please try again",
+                variant: "destructive",
+            });
+            throw error;
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const register = async (email: string, password: string, firstName: string, lastName: string) => {
+    const login = async (data: LoginRequest, options: LoginOptions = { rememberMe: false }) => {
         try {
-            const response = await registerUser({ email, password, firstName, lastName });
-            localStorage.setItem('token', response.token);
+            setIsLoading(true);
+            const response = await authService.login(data, options);
             setUser(response.user);
+            toast({
+                title: "Login successful",
+                description: "Welcome back!",
+            });
+            router.push('/');
         } catch (error) {
-            console.error('Registration failed:', error);
-            throw new Error('Registration failed');
+            toast({
+                title: "Login failed",
+                description: error instanceof Error ? error.message : "Please try again",
+                variant: "destructive",
+            });
+            throw error;
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
+        authService.logout();
         setUser(null);
-        router.push('/admin/login');
+        toast({
+            title: "Logged out",
+            description: "You have been successfully logged out",
+        });
+        router.push('/login');
     };
 
-    const value = {
-        user,
-        login,
-        register,
-        logout,
-        isAuthenticated: !!user,
-        isLoading,
-    };
-
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                isAuthenticated: !!user,
+                isLoading,
+                register,
+                login,
+                logout,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
 export function useAuth() {
