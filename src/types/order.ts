@@ -1,7 +1,7 @@
 export interface OrderLine {
-    productId: number;
+    productId: string;
     quantity: number;
-    variantId?: number;
+    variantId?: string;
 }
 
 export interface CreateOrderRequest {
@@ -10,8 +10,8 @@ export interface CreateOrderRequest {
 }
 
 export interface Order {
-    id: number;
-    userId: number;
+    id: string;
+    userId: string;
     totalPrice: number;
     currency: string;
     orderStatus: string;
@@ -31,7 +31,7 @@ export interface CreatePaymentRequest {
 }
 
 export interface CreatePaymentResponse {
-    paymentId: number;
+    paymentId: string;
     status: string;
     redirectUrl: string;
 }

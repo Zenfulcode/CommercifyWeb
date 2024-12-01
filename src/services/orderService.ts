@@ -20,7 +20,7 @@ class OrderService extends BaseApiService {
         return OrderService.instance;
     }
 
-    async createOrder(userId: number, orderData: CreateOrderRequest): Promise<CreateOrderResponse> {
+    async createOrder(userId: string, orderData: CreateOrderRequest): Promise<CreateOrderResponse> {
         return this.post<CreateOrderResponse>(`/orders/${userId}`, orderData, true);
     }
 

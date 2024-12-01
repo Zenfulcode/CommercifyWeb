@@ -14,8 +14,6 @@ import {
 } from "@/components/ui/sheet";
 import { ShoppingCart, Minus, Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from '@/context/AuthContext';
-import { useToast } from '@/hooks/use-toast';
 import { CartItem } from '@/types/product';
 import Image from 'next/image';
 import placeholderImage from '@/public/placeholder.webp';
@@ -23,8 +21,6 @@ import placeholderImage from '@/public/placeholder.webp';
 export const CartSheet = () => {
     const router = useRouter();
     const { cart, totalItems, totalPrice, updateCartItemQuantity, removeFromCart } = useCart();
-    const { isAuthenticated } = useAuth();
-    const { toast } = useToast();
     const sheetCloseRef = React.useRef<HTMLButtonElement>(null);
 
     const formatPrice = (amount: number, currency: string) => {
@@ -35,16 +31,16 @@ export const CartSheet = () => {
     };
 
     const handleCheckout = () => {
-        if (!isAuthenticated) {
-            toast({
-                title: "Login Required",
-                description: "Please log in to proceed with checkout",
-                variant: "destructive",
-            });
-            sheetCloseRef.current?.click(); // Close the cart sheet
-            router.push('/auth/login');
-            return;
-        }
+        // if (!isAuthenticated) {
+        //     toast({
+        //         title: "Login Required",
+        //         description: "Please log in to proceed with checkout",
+        //         variant: "destructive",
+        //     });
+        //     sheetCloseRef.current?.click(); // Close the cart sheet
+        //     router.push('/auth/login');
+        //     return;
+        // }
 
         sheetCloseRef.current?.click(); // Close the cart sheet
         router.push('/checkout');

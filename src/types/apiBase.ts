@@ -7,10 +7,12 @@ export class ApiError extends Error {
     }
 }
 
-export const getAuthHeader = () => ({
-    Authorization: `Bearer ${localStorage.getItem('token')}`
-});
+export const getAuthHeader = () => {
+    if (typeof window === 'undefined') return undefined;
 
+    const token = localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : undefined;
+};
 interface RequestOptions {
     requiresAuth?: boolean;
     includeContentType?: boolean;

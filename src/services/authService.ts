@@ -2,10 +2,6 @@ import { BaseApiService } from '@/types/apiBase';
 import { RegisterRequest, LoginRequest, AuthResponse } from '@/types/auth';
 import { authStorage } from './authStorage';
 
-interface LoginOptions {
-  rememberMe: boolean;
-}
-
 class AuthService extends BaseApiService {
   private static instance: AuthService;
 
@@ -20,10 +16,16 @@ class AuthService extends BaseApiService {
     return AuthService.instance;
   }
 
-  async register(data: RegisterRequest, rememberMe = false): Promise<AuthResponse> {
+  async register(data: RegisterRequest): Promise<AuthResponse> {
     try {
       const response = await this.post<AuthResponse>('/signup', data);
-      authStorage.setToken(response.token, rememberMe);
+
+      console.log(response);
+
+      if (response.token.length >= 0) {
+        authStorage.setToken(response.token);
+      }
+
       return response;
     } catch (error) {
       if (error instanceof Error) {
@@ -33,10 +35,11 @@ class AuthService extends BaseApiService {
     }
   }
 
-  async login(data: LoginRequest, options: LoginOptions = { rememberMe: false }): Promise<AuthResponse> {
+  async login(data: LoginRequest): Promise<AuthResponse> {
     try {
       const response = await this.post<AuthResponse>('/signin', data);
-      authStorage.setToken(response.token, options.rememberMe);
+
+      authStorage.setToken(response.token);
       return response;
     } catch (error) {
       if (error instanceof Error) {
@@ -47,7 +50,7 @@ class AuthService extends BaseApiService {
   }
 
   logout() {
-    authStorage.clearToken();
+    authStorage.removeToken();
   }
 
   getToken() {
@@ -57,11 +60,6 @@ class AuthService extends BaseApiService {
   isAuthenticated() {
     return !!this.getToken();
   }
-
-  isRememberMe() {
-    return authStorage.isRememberMe();
-  }
 }
-
 
 export const authService = AuthService.getInstance();
