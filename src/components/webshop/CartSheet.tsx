@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { Button } from "@/components/ui/button";
 import {
@@ -9,21 +10,44 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
+    SheetClose,
 } from "@/components/ui/sheet";
 import { ShoppingCart, Minus, Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { CartItem } from '@/types/product';
 import Image from 'next/image';
 import placeholderImage from '@/public/placeholder.webp';
-import { CartItem } from '@/types/product';
 
 export const CartSheet = () => {
+    const router = useRouter();
     const { cart, totalItems, totalPrice, updateCartItemQuantity, removeFromCart } = useCart();
+    const { isAuthenticated } = useAuth();
+    const { toast } = useToast();
+    const sheetCloseRef = React.useRef<HTMLButtonElement>(null);
 
     const formatPrice = (amount: number, currency: string) => {
         return new Intl.NumberFormat('da-DK', {
             style: 'currency',
             currency: currency,
         }).format(amount);
+    };
+
+    const handleCheckout = () => {
+        if (!isAuthenticated) {
+            toast({
+                title: "Login Required",
+                description: "Please log in to proceed with checkout",
+                variant: "destructive",
+            });
+            sheetCloseRef.current?.click(); // Close the cart sheet
+            router.push('/auth/login');
+            return;
+        }
+
+        sheetCloseRef.current?.click(); // Close the cart sheet
+        router.push('/checkout');
     };
 
     const getVariantDisplay = (item: CartItem) => {
@@ -150,11 +174,15 @@ export const CartSheet = () => {
                                 <span>{formatPrice(totalPrice, cart[0].price.currency)}</span>
                             </div>
                         </div>
-                        <Button className="w-full">
+                        <Button
+                            className="w-full"
+                            onClick={handleCheckout}
+                        >
                             Checkout ({totalItems} {totalItems === 1 ? 'item' : 'items'})
                         </Button>
                     </div>
                 )}
+                <SheetClose ref={sheetCloseRef} className="hidden" />
             </SheetContent>
         </Sheet>
     );

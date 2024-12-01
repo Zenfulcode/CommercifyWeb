@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             title: "Logged out",
             description: "You have been successfully logged out",
         });
-        router.push('/login');
+        router.push('/auth/login');
     };
 
     return (
