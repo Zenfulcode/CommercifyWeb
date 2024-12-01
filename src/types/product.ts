@@ -6,7 +6,7 @@ export interface ProductOption {
 }
 
 export interface ProductVariant {
-  id: number;
+  id: string;
   sku: string;
   unitPrice?: number;
   options: ProductOption[];
@@ -18,7 +18,7 @@ export interface ProductPrice {
 }
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description?: string;
   price: ProductPrice;
@@ -32,7 +32,7 @@ export interface Product {
 
 export interface CartItem {
   cartItemId: string; // Unique identifier for cart item
-  id: number; // Product ID
+  id: string; // Product ID
   name: string;
   price: ProductPrice;
   imageUrl?: string;

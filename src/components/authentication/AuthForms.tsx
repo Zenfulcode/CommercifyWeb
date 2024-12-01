@@ -20,7 +20,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 const registerSchema = z.object({
     email: z.string().email(),
-    password: z.string().min(2).optional(),
+    password: z.string().min(8).optional(),
     firstName: z.string().min(2),
     lastName: z.string().min(2),
     isGuest: z.boolean().default(false),
@@ -35,7 +35,7 @@ const registerSchema = z.object({
 
 const loginSchema = z.object({
     email: z.string().email(),
-    password: z.string().min(2),
+    password: z.string().min(8),
     rememberMe: z.boolean().default(false),
 });
 

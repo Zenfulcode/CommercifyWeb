@@ -27,11 +27,11 @@ export default function RootLayout({
                   <CartSheet />
                 </div>
               </header>
-              <Toaster />
               <main>{children}</main>
             </div>
           </CartProvider>
         </AuthProvider>
+        <Toaster />
       </body>
     </html>
   )

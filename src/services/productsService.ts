@@ -17,33 +17,28 @@ class ProductService extends BaseApiService {
         return ProductService.instance;
     }
 
-    // Public endpoint - no auth required
     async getProducts(params?: PaginationParams): Promise<ProductsResponse> {
         return this.fetchWithPagination<Product>(
             '/products/active',
             this.EMBEDDED_KEY,
             params,
-            false // doesn't require auth
+            false
         );
     }
 
-    // Public endpoint - no auth required
-    async getProductById(id: number): Promise<Product> {
+    async getProductById(id: string): Promise<Product> {
         return this.get<Product>(`/products/${id}`, false);
     }
 
-    // Protected endpoint - requires auth
     async createProduct(product: CreateProductRequest): Promise<Product> {
         return this.post<Product>('/products', product, true);
     }
 
-    // Protected endpoint - requires auth
-    async updateProduct(id: number, product: Partial<Product>): Promise<Product> {
+    async updateProduct(id: string, product: Partial<Product>): Promise<Product> {
         return this.put<Product>(`/products/${id}`, product, true);
     }
 
-    // Protected endpoint - requires auth
-    async deleteProduct(id: number): Promise<void> {
+    async deleteProduct(id: string): Promise<void> {
         return this.delete(`/products/${id}`, true);
     }
 }

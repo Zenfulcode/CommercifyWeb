@@ -11,6 +11,7 @@ export interface RegisterRequest {
     password?: string;
     firstName: string;
     lastName: string;
+    isGuest?: boolean;
     shippingAddress?: Address;
     billingAddress?: Address;
 }
@@ -23,7 +24,7 @@ export interface LoginRequest {
 export interface AuthResponse {
     token: string;
     user: {
-        id: number;
+        id: string;
         email: string;
         firstName: string;
         lastName: string;

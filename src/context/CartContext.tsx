@@ -32,7 +32,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('cart', JSON.stringify(cart));
     }, [cart]);
 
-    const generateCartItemId = (productId: number, variantSku?: string) => {
+    const generateCartItemId = (productId: string, variantSku?: string) => {
         return variantSku ? `${productId}-${variantSku}` : `${productId}`;
     };
 

@@ -36,38 +36,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
-    const register = async (data: RegisterRequest, rememberMe = false) => {
+    const register = async (data: RegisterRequest) => {
         try {
             setIsLoading(true);
-            const response = await authService.register(data, rememberMe);
+            const response = await authService.register(data);
             setUser(response.user);
-            toast({
-                title: "Registration successful",
-                description: "Welcome to our store!",
-            });
-            router.push('/');
         } catch (error) {
-            toast({
-                title: "Registration failed",
-                description: error instanceof Error ? error.message : "Please try again",
-                variant: "destructive",
-            });
             throw error;
         } finally {
             setIsLoading(false);
         }
     };
 
-    const login = async (data: LoginRequest, options: LoginOptions = { rememberMe: false }) => {
+    const login = async (data: LoginRequest) => {
         try {
             setIsLoading(true);
-            const response = await authService.login(data, options);
+            const response = await authService.login(data);
             setUser(response.user);
-            toast({
-                title: "Login successful",
-                description: "Welcome back!",
-            });
-            router.push('/');
         } catch (error) {
             toast({
                 title: "Login failed",
@@ -87,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             title: "Logged out",
             description: "You have been successfully logged out",
         });
-        router.push('/login');
+        router.push('/auth/login');
     };
 
     return (
