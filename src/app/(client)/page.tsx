@@ -4,17 +4,11 @@ import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
-  AlertCircle,
   RefreshCw,
   ServerCrash,
   Wifi,
   WifiOff
 } from 'lucide-react';
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert";
 import { Product } from '@/types/product';
 import { useToast } from '@/hooks/use-toast';
 import { productApi } from '@/services/productsService';
@@ -67,14 +61,6 @@ export default function ProductsPage() {
     return (
       <div className="container mx-auto py-16 px-4">
         <div className="max-w-2xl mx-auto space-y-8">
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error Loading Products</AlertTitle>
-            <AlertDescription>
-              We couldn&apos;t load the products at this time.
-            </AlertDescription>
-          </Alert>
-
           <div className="bg-card rounded-lg p-8 text-center space-y-6">
             <div className="flex justify-center">
               <ServerCrash className="h-16 w-16 text-muted-foreground" />

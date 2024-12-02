@@ -1,49 +1,52 @@
 services:
-  mysql-db:
-    image: docker.io/bitnami/mysql:8.4
-    container_name: mysql-db
+  commercify-web:
+    # image: ghcr.io/zenfulcode/commercifyweb:dev
+    container_name: commercify-web
+    build:
+      context: .
+      args:
+        - NODE_ENV=production
+        - NEXT_PUBLIC_COMMERCIFY_API_URL=http://localhost:6091/api/v1
     env_file: .env
     environment:
-      ALLOW_EMPTY_PASSWORD: "no"
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      - NODE_ENV=${NODE_ENV}
+      - NEXT_PUBLIC_COMMERCIFY_API_URL=${NEXT_PUBLIC_COMMERCIFY_API_URL}
+      - NEXT_PUBLIC_DEV_COMMERCIFY_API_URL=${NEXT_PUBLIC_DEV_COMMERCIFY_API_URL}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - EMAIL_DEV=${EMAIL_DEV}
     ports:
-      - "3307:3306"
+      - "3000:3000"
     networks:
-      - spring-net
-    volumes:
-      - mysql-data:/bitnami/mysql/data
-      - ./mysql-init-scripts:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD", "/opt/bitnami/scripts/mysql/healthcheck.sh"]
-      interval: 15s
-      timeout: 5s
-      retries: 6
+      - commercify
 
-  commercify:
-    image: ghcr.io/zenfulcode/commercify:dev
+  commercify-api:
+    image: ghcr.io/zenfulcode/commercify:main
     env_file: .env
     container_name: commercify-api
-    ports:
-      - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - STRIPE_TEST_SECRET=${STRIPE_TEST_SECRET}
+      - SPRING_DATASOURCE_URL=${DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-    depends_on:
-      mysql-db:
-        condition: service_healthy
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - MOBILEPAY_MERCHANT_ID=${MOBILEPAY_MERCHANT_ID}
+      - MOBILEPAY_CLIENT_ID=${MOBILEPAY_CLIENT_ID}
+      - MOBILEPAY_CLIENT_SECRET=${MOBILEPAY_CLIENT_SECRET}
+      - MOBILEPAY_SUBSCRIPTION_KEY=${MOBILEPAY_SUBSCRIPTION_KEY}
+      - MOBILEPAY_API_URL=${MOBILEPAY_API_URL}
+      - MOBILEPAY_SYSTEM_NAME=${MOBILEPAY_SYSTEM_NAME}
+      - STRIPE_SECRET_TEST_KEY=${STRIPE_SECRET_TEST_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+    ports:
+      - "6091:6091"
     networks:
-      - spring-net
+      - commercify
 
 networks:
-  spring-net:
+  commercify:
     driver: bridge
-
-volumes:
-  mysql-data:
-    driver: local
