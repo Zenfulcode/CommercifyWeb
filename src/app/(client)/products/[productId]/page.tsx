@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Product, ProductVariant } from '@/types/product';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,21 +14,53 @@ import {
 import Image from 'next/image';
 import placeholderImage from '@/public/placeholder.webp';
 import { useRouter } from 'next/navigation';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb';
-import { ChevronLeft } from 'lucide-react';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { ArrowLeft, ChevronLeft, Loader2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { productApi } from '@/services/productsService';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 
-interface ProductDetailsProps {
-  product: Product;
-}
+export default function ProductDetails({ params }: { params: { productId: string } }) {
+  const [product, setProduct] = useState<Product | null>(null);
 
-const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const router = useRouter();
   const { addToCart } = useCart();
 
-  const [selectedVariant, setSelectedVariant] = React.useState<ProductVariant | undefined>(
-    product.variants?.[0] || null
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(
+    product?.variants?.[0] || undefined
   );
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!params.productId) {
+        setError('Product not found');
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await productApi.getProductById(params.productId);
+        setProduct(response);
+        setSelectedVariant(response.variants?.[0] || null);
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [params.productId]);
 
   const formatPrice = (amount: number, currency: string) => {
     return new Intl.NumberFormat('da-DK', {
@@ -38,14 +70,50 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   };
 
   const handleAddToCart = () => {
-    // If product has variants, only add to cart if a variant is selected
+    if (!product) {
+      setError('Product not found');
+      return;
+    }
+
     if (product.variants.length > 0 && !selectedVariant) {
-      // You might want to add a toast or error message here
+      toast({
+        title: 'Please select a size',
+        description: 'Please select a size before adding to cart',
+        variant: 'destructive'
+      });
       return;
     }
 
     addToCart(product, selectedVariant);
   };
+
+  if (error || !product) {
+    return (
+      <div className="px-4 sm:px-6 lg:px-8 py-12">
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            {error || 'Product not found'}
+          </AlertDescription>
+        </Alert>
+        <Link
+          href="/"
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 mt-4"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Shop
+        </Link>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[calc(100vh-100px)] flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8">
@@ -61,10 +129,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         </Button>
 
         <Breadcrumb>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
-          <BreadcrumbLink href="/">Products</BreadcrumbLink>
-          <BreadcrumbItem>{product.name}</BreadcrumbItem>
-
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              products
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{product.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
         </Breadcrumb>
       </div>
 
@@ -136,8 +213,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           </Button>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
-
-export default ProductDetails;

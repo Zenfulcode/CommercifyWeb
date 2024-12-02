@@ -6,7 +6,7 @@ class AuthService extends BaseApiService {
   private static instance: AuthService;
 
   private constructor() {
-    super('http://localhost:6091/api/v1/auth');
+    super('http://localhost:6091/api/v1/auth', '/auth');
   }
 
   public static getInstance(): AuthService {
@@ -19,8 +19,6 @@ class AuthService extends BaseApiService {
   async register(data: RegisterRequest): Promise<AuthResponse> {
     try {
       const response = await this.post<AuthResponse>('/signup', data);
-
-      console.log(response);
 
       if (response.token.length >= 0) {
         authStorage.setToken(response.token);

@@ -28,7 +28,7 @@ type PaymentMethod = typeof PAYMENT_METHODS[keyof typeof PAYMENT_METHODS];
 export function PaymentStep() {
     const { toast } = useToast();
     const { cart, clearCart } = useCart();
-    const { state } = useCheckout();
+    const { state, setStep } = useCheckout();
     const { user } = useAuth();
     const [isProcessing, setIsProcessing] = React.useState(false);
     const [selectedMethod, setSelectedMethod] = React.useState<PaymentMethod>(PAYMENT_METHODS.MOBILEPAY);
@@ -61,15 +61,11 @@ export function PaymentStep() {
                 ...(item.selectedVariant && { variantId: item.selectedVariant.id }),
             }));
 
-            console.log(orderLines);
-
             // Create order
             const orderResponse = await orderService.createOrder(user.id, {
                 currency: "DKK",
                 orderLines,
             });
-
-            console.log(orderResponse);
 
             // Create payment based on selected method
             if (selectedMethod === PAYMENT_METHODS.MOBILEPAY) {
@@ -162,7 +158,7 @@ export function PaymentStep() {
                     <Button
                         type="button"
                         variant="outline"
-                        onClick={() => window.history.back()}
+                        onClick={() => setStep('information')}
                     >
                         Back
                     </Button>

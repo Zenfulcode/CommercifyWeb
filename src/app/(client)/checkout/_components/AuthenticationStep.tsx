@@ -40,8 +40,6 @@ export function AuthenticationStep() {
         resolver: zodResolver(loginSchema),
     });
 
-    console.log(isAuthenticated);
-
     if (isAuthenticated) {
         setStep('information');
         return null;
