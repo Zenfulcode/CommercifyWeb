@@ -1,3 +1,5 @@
+import { PaginatedResponse } from "./pagination";
+
 export interface OrderLine {
     productId: string;
     quantity: number;
@@ -18,6 +20,12 @@ export interface Order {
     createdAt: string;
 }
 
+export interface OrderDetails extends Order {
+    orderLines: OrderLine[];
+    customerName?: string;
+    customerEmail?: string;
+}
+
 export interface CreateOrderResponse {
     order: Order;
     message: string;
@@ -35,3 +43,6 @@ export interface CreatePaymentResponse {
     status: string;
     redirectUrl: string;
 }
+
+export type OrdersResponse = PaginatedResponse<Order>;
+export type OrderDetailsResponse = PaginatedResponse<OrderDetails>;

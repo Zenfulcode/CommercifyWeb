@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/alert";
 import { Product } from '@/types/product';
 import { useToast } from '@/hooks/use-toast';
-import { productApi } from '@/services/productsService';
+import { productService } from '@/services/productsService';
 import ProductCard from '@/components/products/ProductCard';
 
 export default function ProductsPage() {
@@ -31,7 +31,7 @@ export default function ProductsPage() {
     try {
       setError(null);
       setIsRetrying(true);
-      const response = await productApi.getProducts();
+      const response = await productService.getProducts();
       setProducts(response._embedded.productViewModels);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load products');

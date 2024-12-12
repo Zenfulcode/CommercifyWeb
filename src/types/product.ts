@@ -6,9 +6,10 @@ export interface ProductOption {
 }
 
 export interface ProductVariant {
-  id: string;
+  id?: string;
   sku: string;
   unitPrice?: number;
+  imageUrl?: string;
   options: ProductOption[];
 }
 
@@ -18,7 +19,7 @@ export interface ProductPrice {
 }
 
 export interface Product {
-  id: string;
+  id?: string;
   name: string;
   description?: string;
   price: ProductPrice;

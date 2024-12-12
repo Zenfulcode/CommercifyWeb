@@ -1,4 +1,4 @@
-import { productApi } from "@/services/productsService";
+import { productService } from "@/services/productsService";
 import ProductDetails from "./_components/ProductDetails";
 
 interface ProductPageProps {
@@ -8,7 +8,7 @@ interface ProductPageProps {
   }
   
   export default async function ProductPage({ params }: ProductPageProps) {
-    const product = await productApi.getProductById(params.id);
+    const product = await productService.getProductById(params.id);
     
     return <ProductDetails product={product} />;
   }

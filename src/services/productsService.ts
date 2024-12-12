@@ -26,6 +26,15 @@ class ProductService extends BaseApiService {
         );
     }
 
+    async getAllProducts(params?: PaginationParams): Promise<ProductsResponse> {
+        return this.fetchWithPagination<Product>(
+            '/products',
+            this.EMBEDDED_KEY,
+            params,
+            true
+        );
+    }
+
     async getProductById(id: string): Promise<Product> {
         return this.get<Product>(`/products/${id}`, false);
     }
@@ -43,4 +52,4 @@ class ProductService extends BaseApiService {
     }
 }
 
-export const productApi = ProductService.getInstance();
+export const productService = ProductService.getInstance();
