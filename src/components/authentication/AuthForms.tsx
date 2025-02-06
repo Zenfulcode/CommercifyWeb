@@ -17,6 +17,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 const registerSchema = z.object({
     email: z.string().email(),
@@ -153,8 +155,11 @@ export function RegisterForm() {
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-export function LoginForm() {
+export function LoginForm({ redirectUrl }: { redirectUrl: string }) {
+    const { toast } = useToast();
     const { login } = useAuth();
+    const router = useRouter();
+
     const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -162,14 +167,30 @@ export function LoginForm() {
         },
     });
 
-    const onSubmit = async (values: LoginFormData) => {
+    const onSubmit = async (values: z.infer<typeof loginSchema>) => {
         try {
             const { email, password, rememberMe } = values;
             await login({ email, password }, { rememberMe });
+
+            toast({
+                title: "Login successful",
+                description: "You have been successfully logged in",
+            });
+
+            router.replace(redirectUrl);
         } catch (error) {
             console.error('Login error:', error);
+            if (error instanceof Error) {
+                toast({
+                    title: "Login failed",
+                    description: error.message,
+                    variant: "destructive",
+                });
+            }
         }
     };
+
+
 
     return (
         <Card className="w-full max-w-md mx-auto">

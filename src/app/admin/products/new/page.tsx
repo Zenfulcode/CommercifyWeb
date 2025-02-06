@@ -1,11 +1,14 @@
 import { Suspense } from "react";
-import { Loader2 } from "lucide-react";
 import ProductForm from "@/components/admin/screens/ProductForm";
+import Loader from "@/components/shared/Loader";
+import AdminLayout from "@/components/admin/layouts/AdminLayout";
 
 export default function CreateProductPage() {
     return (
-        <Suspense fallback={<Loader2 className="animate-spin" />}>
-            <ProductForm />
+        <Suspense fallback={<Loader />}>
+            <AdminLayout>
+                <ProductForm />
+            </AdminLayout>
         </Suspense>
     );
 }

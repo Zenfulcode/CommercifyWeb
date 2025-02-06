@@ -23,7 +23,7 @@ export default function RootLayout({
             <div className="relative">
               <header className="sticky top-0 z-50 bg-background border-b">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                  <nav>{/* Your navigation items */}</nav>
+                  <nav>{/* navigation items */}</nav>
                   <CartSheet />
                 </div>
               </header>

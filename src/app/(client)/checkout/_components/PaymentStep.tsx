@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { CreditCard, Phone } from "lucide-react";
 import { orderService } from '@/services/orderService';
 import { useToast } from '@/hooks/use-toast';
+import { CreateOrderRequest } from '@/types/order';
 
 const PAYMENT_METHODS = {
     MOBILEPAY: 'WALLET',
@@ -61,13 +62,23 @@ export function PaymentStep() {
                 ...(item.selectedVariant && { variantId: item.selectedVariant.id }),
             }));
 
-            console.log(orderLines);
+            const shippingAddress = state.customerInfo?.shippingAddress;
+            if (!shippingAddress) {
+                throw new Error("Shipping address is required");
+            }
 
-            // Create order
-            const orderResponse = await orderService.createOrder(user.id, {
+            const createOrderRequest: CreateOrderRequest = {
                 currency: "DKK",
                 orderLines,
-            });
+                shippingAddress
+            };
+
+            const billingAddress = state.customerInfo?.billingAddress;
+            if (billingAddress) {
+                createOrderRequest.billingAddress = billingAddress;
+            }
+
+            const orderResponse = await orderService.createOrder(user.id, createOrderRequest);
 
             console.log(orderResponse);
 

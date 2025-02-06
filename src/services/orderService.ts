@@ -34,6 +34,10 @@ class OrderService extends BaseApiService {
         return this.post<CreatePaymentResponse>('/payments/mobilepay/create', paymentData, true);
     }
 
+    async createStripePayment(paymentData: CreatePaymentRequest): Promise<CreatePaymentResponse> {
+        return this.post<CreatePaymentResponse>('/payments/stripe/create', paymentData, true);
+    }
+
     async getAllOrders(params?: PaginationParams): Promise<OrdersResponse> {
         return this.fetchWithPagination<Order>(
             '/orders',

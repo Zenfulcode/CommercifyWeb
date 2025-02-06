@@ -157,7 +157,7 @@ export function CommercifyProvider({ children }: { children: React.ReactNode }) 
 
     const activeOrders = () => {
         if (orders.length === 0) return 0;
-        return orders.filter(order => order.orderStatus === 'PAID').length;
+        return orders.filter(order => order.orderStatus === 'paid').length;
     };
 
     const fetchOrderDetailsById = async (id: string) => {

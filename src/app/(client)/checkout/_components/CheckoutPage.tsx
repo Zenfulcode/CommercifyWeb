@@ -48,7 +48,7 @@ export function Checkout() {
     }[state.step];
 
     return (
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto py-8 max-w-5xl">
             <StepIndicator currentStep={currentStepIndex} />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">

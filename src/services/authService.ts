@@ -1,12 +1,12 @@
 import { BaseApiService } from '@/types/apiBase';
-import { RegisterRequest, LoginRequest, AuthResponse } from '@/types/auth';
 import { authStorage } from './authStorage';
+import { AuthResponse, LoginRequest, RegisterRequest } from '@/types/auth';
 
 class AuthService extends BaseApiService {
   private static instance: AuthService;
 
   private constructor() {
-    super('http://localhost:6091/api/v1/auth');
+    super('http://localhost:6091/api/v1/auth', '/auth');
   }
 
   public static getInstance(): AuthService {
@@ -43,6 +43,7 @@ class AuthService extends BaseApiService {
       return response;
     } catch (error) {
       if (error instanceof Error) {
+        console.error(error.message);
         throw new Error(error.message);
       }
       throw new Error('Login failed');

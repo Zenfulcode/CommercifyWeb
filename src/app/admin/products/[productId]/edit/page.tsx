@@ -2,11 +2,16 @@
 import { Suspense } from "react";
 import { Loader } from "lucide-react";
 import ProductForm from "@/components/admin/screens/ProductForm";
+import AdminLayout from "@/components/admin/layouts/AdminLayout";
 
 export default function EditProductPage({ params }: { params: { id: string } }) {
+    console.log(params);
+    
     return (
         <Suspense fallback={<Loader />}>
-            <ProductForm productId={params.id} />
+            <AdminLayout>
+                <ProductForm productId={params.id} />
+            </AdminLayout>
         </Suspense>
     );
 }

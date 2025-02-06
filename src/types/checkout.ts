@@ -6,7 +6,7 @@ export interface CustomerInfo {
     firstName: string;
     lastName: string;
     email: string;
-    shippingAddress: Address;
+    shippingAddress: Address | undefined;
     billingAddress?: Address;
 }
 

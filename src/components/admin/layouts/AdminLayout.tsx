@@ -3,7 +3,7 @@
 import React from 'react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '../shared/AppSidebar';
-import { AuthProvider } from '@/context/AuthContext';
+import { CommercifyProvider } from '@/context/CommercifyContext';
 
 export default function AdminLayout({
     children,
@@ -11,7 +11,7 @@ export default function AdminLayout({
     children: React.ReactNode
 }) {
     return (
-        <AuthProvider>
+        <CommercifyProvider>
             <SidebarProvider>
                 <AppSidebar />
                 <main className="flex-col w-full p-4">
@@ -19,6 +19,6 @@ export default function AdminLayout({
                     {children}
                 </main>
             </SidebarProvider>
-        </AuthProvider>
+        </CommercifyProvider>
     );
 }

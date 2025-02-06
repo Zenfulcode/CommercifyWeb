@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/services/authService';
 import { RegisterRequest, LoginRequest, AuthResponse } from '@/types/auth';
@@ -14,6 +14,7 @@ const AuthContext = createContext<{
     user: AuthResponse['user'] | null;
     isAuthenticated: boolean;
     isLoading: boolean;
+    isAdmin: boolean;
     register: (data: RegisterRequest, rememberMe?: boolean) => Promise<void>;
     login: (data: LoginRequest, options?: LoginOptions) => Promise<void>;
     logout: () => void;
@@ -25,16 +26,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { toast } = useToast();
     const router = useRouter();
 
-    useEffect(() => {
-        const token = authService.getToken();
-        if (token) {
-            // Here you might want to validate the token with your backend
-            // and fetch the user data
-            setIsLoading(false);
-        } else {
-            setIsLoading(false);
-        }
-    }, []);
+    // useEffect(() => {
+    //     const token = authService.getToken();
+    //     if (!token && redirectUrl) {
+    //         router.push(redirectUrl);
+    //     }
+    // }, []);
 
     const register = async (data: RegisterRequest) => {
         try {
@@ -81,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 user,
                 isAuthenticated: !!user,
                 isLoading,
+                isAdmin: user?.roles.includes('ROLE_ADMIN') ?? false,
                 register,
                 login,
                 logout,

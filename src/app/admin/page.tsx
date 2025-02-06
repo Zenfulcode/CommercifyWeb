@@ -1,12 +1,15 @@
+import AdminLayout from '@/components/admin/layouts/AdminLayout'
 import AdminDashboard from '@/components/admin/screens/AdminDashboard'
-import { Loader } from 'lucide-react'
+import Loader from '@/components/shared/Loader'
 import React, { Suspense } from 'react'
 
 
 function AdminPage() {
     return (
         <Suspense fallback={<Loader />}>
-            <AdminDashboard />
+            <AdminLayout>
+                <AdminDashboard />
+            </AdminLayout>
         </Suspense>
     )
 }

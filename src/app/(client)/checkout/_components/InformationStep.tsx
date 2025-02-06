@@ -264,7 +264,7 @@ export function InformationStep() {
                                     control={form.control}
                                     name="useSameForBilling"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="flex space-y-0 space-x-2 items-center">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
@@ -291,7 +291,7 @@ export function InformationStep() {
                                     control={form.control}
                                     name="wantsToRegister"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-start space-x-3">
+                                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}

@@ -20,8 +20,29 @@ interface RequestOptions {
 
 export abstract class BaseApiService {
     protected constructor(
-        protected baseUrl: string
-    ) { }
+        protected baseUrl: string,
+        protected endpoint: string = ''
+    ) {
+        if (process.env.NODE_ENV === 'development') {
+            this.baseUrl = process.env.NEXT_PUBLIC_DEV_COMMERCIFY_API_URL as string;
+        } else {
+            this.baseUrl = process.env.NEXT_PUBLIC_COMMERCIFY_API_URL as string;
+        }
+
+        if (this.baseUrl.endsWith('/')) {
+            this.baseUrl = this.baseUrl.slice(0, -1);
+        }
+
+        if (endpoint.length > 0) {
+            if (endpoint.startsWith('/')) {
+                this.endpoint = endpoint;
+            } else {
+                this.endpoint = `/${endpoint}`;
+            }
+
+            this.baseUrl += this.endpoint;
+        }
+    }
 
     protected getHeaders(options: RequestOptions = {}): HeadersInit {
         const { requiresAuth = false, includeContentType = true } = options;
@@ -43,7 +64,7 @@ export abstract class BaseApiService {
             const queryParams = new URLSearchParams({
                 page: (params.page ?? 0).toString(),
                 size: (params.size ?? 10).toString(),
-                ...(params.sort ? { sort: params.sort } : {})
+                ...(params.sortBy ? { sort: params.sortBy } : {})
             });
 
             const response = await fetch(
@@ -53,19 +74,21 @@ export abstract class BaseApiService {
                 }
             );
 
+            
             if (response.status === 401) {
                 localStorage.removeItem('token');
                 throw new ApiError(401, 'Authentication required');
             }
-
+            
             if (!response.ok) {
                 throw new ApiError(
                     response.status,
                     `API request failed: ${response.statusText}`
                 );
             }
-
+            
             const data = await response.json();
+            console.log(data);
 
             if (!data._embedded || !data._embedded[embeddedKey]) {
                 throw new ApiError(

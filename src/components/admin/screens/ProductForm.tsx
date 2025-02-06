@@ -58,7 +58,7 @@ interface ProductFormProps {
     productId?: string;
 }
 
-export default function ProductForm({ productId }: ProductFormProps) {
+export  default function ProductForm({ productId }: ProductFormProps) {
     const router = useRouter();
     const { toast } = useToast();
 
@@ -72,16 +72,16 @@ export default function ProductForm({ productId }: ProductFormProps) {
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(productSchema),
         defaultValues: {
-            name: '',
-            description: '',
-            stock: 0,
-            imageUrl: '',
-            active: true,
+            name: product?.name || '',
+            description: product?.description || '',
+            stock: product?.stock || 0,
+            imageUrl: product?.imageUrl || '',
+            active: product?.active || false,
             price: {
-                currency: 'DKK',
-                amount: 0,
+                currency: product?.price.currency || 'DKK',
+                amount: product?.price.amount || 0,
             },
-            variants: [],
+            variants: product?.variants || [],
         },
     });
 
@@ -101,6 +101,8 @@ export default function ProductForm({ productId }: ProductFormProps) {
     // Update form when product data is loaded in edit mode
     React.useEffect(() => {
         if (isEditing && product) {
+            console.log(product);
+
             form.reset({
                 name: product.name,
                 description: product.description,
